@@ -1,5 +1,6 @@
 import socket
 import logging
+from typing import Tuple
 import time
 
 MAX_UDP_PAYLOAD_SIZE = 1472  # Maximum UDP payload size (1500 bytes MTU - 20 bytes IP header - 8 bytes UDP header)
@@ -73,7 +74,7 @@ class UDPReceiver:
             logging.error(f"Socket error while receiving data: {e}")
             return b''
 
-    def receive_frame(self, buffer_size: int = 65535) -> tuple[bytes, int]:
+    def receive_frame(self, buffer_size: int = 65535) -> Tuple[bytes, int]:
         while True:
             packet_data = self.receive(buffer_size)
             if not packet_data:
