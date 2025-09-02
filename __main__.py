@@ -37,6 +37,36 @@ def main():
         metavar="[1-100]",
         help="JPEG compression quality (default: 90)."
     )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        choices=["unicast", "multicast"],
+        default="unicast",
+        help="Streaming mode: 'unicast' (default) or 'multicast'"
+    )
+    parser.add_argument(
+        "--mcast_addr",
+        type=str,
+        default="239.1.2.3",
+        help="Multicast group address (used in multicast mode)"
+    )
+    parser.add_argument(
+        "--interface",
+        type=str,
+        default=None,
+        help="Network interface IP to use for multicast (optional)"
+    )
+    parser.add_argument(
+        "--loopback",
+        action="store_true",
+        help="Enable multicast loopback (sender receives its own packets)"
+    )
+    parser.add_argument(
+        "--ttl",
+        type=int,
+        default=1,
+        help="Multicast TTL (default: 1, local subnet only)"
+    )
     args = parser.parse_args()
 
     # --- Initialization of Modules ---
@@ -45,7 +75,25 @@ def main():
         camera = Camera(camera_index=args.camera_index)
         compressor = Compressor(quality=args.quality)
         encryptor = Encryptor.from_file(args.key_path)
-        sender = UDPSender(host=args.host, port=args.port)
+        if args.mode == "multicast":
+            from streamer.network import get_sender
+            sender = get_sender(
+                mode="multicast",
+                mcast_addr=args.mcast_addr,
+                port=args.port,
+                interface=args.interface,
+                loopback=args.loopback,
+                ttl=args.ttl
+            )
+            logger.info(f"Multicast mode: streaming to {args.mcast_addr}:{args.port} (interface: {args.interface or 'default'})")
+        else:
+            from streamer.network import get_sender
+            sender = get_sender(
+                mode="unicast",
+                host=args.host,
+                port=args.port
+            )
+            logger.info(f"Unicast mode: streaming to {args.host}:{args.port}")
         logger.info(f"Components initialized. Streaming to {args.host}:{args.port}")
     except Exception as e:
         logger.error(f"Failed to initialize components: {e}")

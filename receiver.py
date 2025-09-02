@@ -23,12 +23,47 @@ def main():
         default="secret.key",
         help="Path to the encryption key file (default: secret.key)."
     )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        choices=["unicast", "multicast"],
+        default="unicast",
+        help="Receiving mode: 'unicast' (default) or 'multicast'"
+    )
+    parser.add_argument(
+        "--mcast_addr",
+        type=str,
+        default="239.1.2.3",
+        help="Multicast group address (used in multicast mode)"
+    )
+    parser.add_argument(
+        "--interface",
+        type=str,
+        default=None,
+        help="Network interface IP to use for multicast (optional)"
+    )
     args = parser.parse_args()
 
     # --- Initialization ---
     try:
         logger.info("Initializing receiver components...")
-        receiver = UDPReceiver(host=args.host, port=args.port)
+        if args.mode == "multicast":
+            from streamer.network import get_receiver
+            receiver = get_receiver(
+                mode="multicast",
+                mcast_addr=args.mcast_addr,
+                port=args.port,
+                interface=args.interface
+            )
+            logger.info(f"Multicast mode: listening on {args.mcast_addr}:{args.port} (interface: {args.interface or 'default'})")
+        else:
+            from streamer.network import get_receiver
+            receiver = get_receiver(
+                mode="unicast",
+                host=args.host,
+                port=args.port
+            )
+            logger.info(f"Unicast mode: listening on {args.host}:{args.port}")
         encryptor = Encryptor.from_file(args.key_path)
         compressor = Compressor()
         logger.info("Receiver initialized. Waiting for stream...")
