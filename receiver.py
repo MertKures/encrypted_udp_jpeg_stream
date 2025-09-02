@@ -78,7 +78,7 @@ def main():
     try:
         while True:
             # 1. Receive
-            encrypted_packet, send_time_ns = receiver.receive_frame()
+            encrypted_packet, send_time_ns = receiver.receive_frame(4096)
             if not encrypted_packet:
                 continue
 
