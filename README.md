@@ -95,7 +95,7 @@ uv run receiver.py 239.1.2.3 5555 --mode multicast --interface 192.168.1.100
 - `__main__.py`: The core logic for streaming (capture, compress, encrypt, send).
 - `streamer/`:
   - `camera.py`: Handles video capture from the camera.
-  - `compression.py`: Manages JPEG compression and decompression. 
+  - `compression.py`: Manages JPEG compression and decompression.
   - `network.py`: Implements UDP sending and receiving, including packet fragmentation and reassembly.
   - `security.py`: Provides encryption and decryption functionalities using Fernet.
 
