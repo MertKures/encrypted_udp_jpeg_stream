@@ -19,72 +19,39 @@ A modular Python package designed for securely streaming compressed camera foota
     cd encrypted_udp_jpeg_stream
     ```
 
-2.  **Create and activate a virtual environment:**
+2.  **Create a secret key**
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate
+    uv run streamer/security.py
     ```
 
-3.  **Install the package and its dependencies:**
+3.  **Start sender**
     ```bash
-    pip install .
+    uv run __main__.py localhost 5555
     ```
 
-## Usage
-
-### 1. Generate an Encryption Key
-
-A secret key is required for encryption and decryption. Generate one using the provided utility:
-
-```bash
-generate-stream-key
-```
-This will create a `secret.key` file in your project root. **Share this file securely with your receiver.**
-
-### 2. Start the Streamer (Sender)
-
-Run the `stream-camera` command, specifying the receiver's IP address and port, along with the path to your encryption key.
-
-```bash
-stream-camera <receiver_ip_address> <receiver_port> --key_path secret.key --camera_index 0 --quality 90
-```
-
--   `<receiver_ip_address>`: The IP address of the machine running the receiver.
--   `<receiver_port>`: The port on which the receiver is listening.
--   `--key_path`: (Optional) Path to your encryption key file (default: `secret.key`).
--   `--camera_index`: (Optional) The index of the camera to use (default: `0`).
--   `--quality`: (Optional) JPEG compression quality (1-100, default: `90`).
-
-### 3. Start the Receiver
-
-Run the `receiver.py` script, specifying the IP address to listen on and the port, along with the encryption key.
-
-```bash
-python receiver.py <listen_ip_address> <listen_port> --key_path secret.key
-```
-
--   `<listen_ip_address>`: The IP address the receiver should listen on (e.g., `0.0.0.0` to listen on all available interfaces).
--   `<listen_port>`: The port on which the receiver should listen.
--   `--key_path`: Path to the encryption key file (must be the same key used by the streamer).
+4.  **Start receiver**
+    ```bash
+    uv run receiver.py localhost 5555
+    ```
 
 ## Project Structure
 
 -   `receiver.py`: The script responsible for receiving, decrypting, decompressing, and displaying the video stream.
 -   `setup.py`: Package installation and dependency management.
+-   `__main__.py`: The core logic for streaming (capture, compress, encrypt, send).
 -   `streamer/`:
     -   `camera.py`: Handles video capture from the camera.
-    -   `compression.py`: Manages JPEG compression and decompression.
-    -   `main.py`: The core logic for streaming (capture, compress, encrypt, send).
+    -   `compression.py`: Manages JPEG compression and decompression. 
     -   `network.py`: Implements UDP sending and receiving, including packet fragmentation and reassembly.
     -   `security.py`: Provides encryption and decryption functionalities using Fernet.
 
 ## Dependencies
 
-The project relies on the following Python libraries, managed via `setup.py`:
+The project relies on the following Python libraries, managed via uv:
 
--   `opencv-python`: For camera access and image processing.
--   `numpy`: A fundamental package for scientific computing with Python, used by OpenCV.
--   `cryptography`: Provides strong cryptographic primitives for secure communication.
+-   `opencv-python`
+-   `numpy`
+-   `cryptography`
 
 ## Contributing
 
