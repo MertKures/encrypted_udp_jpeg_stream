@@ -106,6 +106,7 @@ The project relies on the following Python libraries, managed via uv:
 - `opencv-python`
 - `numpy`
 - `cryptography`
+- `logging-mp`
 
 ## Contributing
 
