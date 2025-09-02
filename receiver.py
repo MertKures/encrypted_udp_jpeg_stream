@@ -15,7 +15,7 @@ def main():
     Main function to receive, decrypt, decompress, and display video frames.
     """
     parser = argparse.ArgumentParser(description="Secure Camera Stream Receiver")
-    parser.add_argument("host", type=str, default='0.0.0.0', help="The IP address to bind to (default: 0.0.0.0, listens on all interfaces).")
+    parser.add_argument("host", type=str, help="The IP address to bind to (unicast) or the multicast group address (multicast).")
     parser.add_argument("port", type=int, help="The port number to listen on.")
     parser.add_argument(
         "--key_path",
@@ -29,12 +29,6 @@ def main():
         choices=["unicast", "multicast"],
         default="unicast",
         help="Receiving mode: 'unicast' (default) or 'multicast'"
-    )
-    parser.add_argument(
-        "--mcast_addr",
-        type=str,
-        default="239.1.2.3",
-        help="Multicast group address (used in multicast mode)"
     )
     parser.add_argument(
         "--interface",
@@ -51,11 +45,11 @@ def main():
             from streamer.network import get_receiver
             receiver = get_receiver(
                 mode="multicast",
-                mcast_addr=args.mcast_addr,
+                host=args.host,
                 port=args.port,
                 interface=args.interface
             )
-            logger.info(f"Multicast mode: listening on {args.mcast_addr}:{args.port} (interface: {args.interface or 'default'})")
+            logger.info(f"Multicast mode: listening on {args.host}:{args.port} (interface: {args.interface or 'default'})")
         else:
             from streamer.network import get_receiver
             receiver = get_receiver(

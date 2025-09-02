@@ -269,7 +269,7 @@ def get_sender(mode: str, **kwargs):
 def get_receiver(mode: str, **kwargs):
     if mode == 'multicast':
         return MulticastReceiver(
-            mcast_addr=kwargs['mcast_addr'],
+            mcast_addr=kwargs['host'],
             port=kwargs['port'],
             interface=kwargs.get('interface')
         )
