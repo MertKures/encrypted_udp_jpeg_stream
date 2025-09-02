@@ -104,10 +104,10 @@ class UDPReceiver:
                     self.inter_arrival_times.append(inter_arrival_time)
                     
                     if len(self.inter_arrival_times) >= self.jitter_log_interval:
-                        avg_inter_arrival_time = sum(self.inter_arrival_times) / len(self.inter_arrival_times)
+                        avg_inter_arrival_time = (sum(self.inter_arrival_times) / len(self.inter_arrival_times)) / 1e6
                         # Jitter can be calculated as the mean deviation of inter-arrival times
-                        jitter = sum(abs(t - avg_inter_arrival_time) for t in self.inter_arrival_times) / len(self.inter_arrival_times)
-                        logging.info(f"Jitter (ns): {jitter:.2f}, Avg Inter-arrival Time (ns): {avg_inter_arrival_time:.2f}")
+                        jitter = (sum(abs(t - avg_inter_arrival_time) for t in self.inter_arrival_times) / len(self.inter_arrival_times)) / 1e6
+                        logging.info(f"Jitter (ms): {jitter:.2f}, Avg Inter-arrival Time (ms): {avg_inter_arrival_time:.2f}")
                         self.inter_arrival_times = [] # Reset for next interval
                 self.last_received_time_ns = current_receive_time_ns
 
