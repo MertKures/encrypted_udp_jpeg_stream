@@ -13,45 +13,49 @@ A modular Python package designed for securely streaming compressed camera foota
 
 ## Installation
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/MertKures/encrypted_udp_jpeg_stream.git
-    cd encrypted_udp_jpeg_stream
-    ```
+1.**Clone the repository:**
 
-2.  **Create a secret key**
-    ```bash
-    uv run streamer/security.py
-    ```
+```bash
+git clone https://github.com/MertKures/encrypted_udp_jpeg_stream.git
+cd encrypted_udp_jpeg_stream
+```
 
-3.  **Start sender**
-    ```bash
-    uv run __main__.py localhost 5555
-    ```
+2.**Create a secret key**
 
-4.  **Start receiver**
-    ```bash
-    uv run receiver.py localhost 5555
-    ```
+```bash
+uv run streamer/security.py
+```
+
+3.**Start sender**
+
+```bash
+uv run __main__.py localhost 5555
+```
+
+4.**Start receiver**
+
+```bash
+uv run receiver.py localhost 5555
+```
 
 ## Project Structure
 
--   `receiver.py`: The script responsible for receiving, decrypting, decompressing, and displaying the video stream.
--   `setup.py`: Package installation and dependency management.
--   `__main__.py`: The core logic for streaming (capture, compress, encrypt, send).
--   `streamer/`:
-    -   `camera.py`: Handles video capture from the camera.
-    -   `compression.py`: Manages JPEG compression and decompression. 
-    -   `network.py`: Implements UDP sending and receiving, including packet fragmentation and reassembly.
-    -   `security.py`: Provides encryption and decryption functionalities using Fernet.
+- `receiver.py`: The script responsible for receiving, decrypting, decompressing, and displaying the video stream.
+- `setup.py`: Package installation and dependency management.
+- `__main__.py`: The core logic for streaming (capture, compress, encrypt, send).
+- `streamer/`:
+  - `camera.py`: Handles video capture from the camera.
+  - `compression.py`: Manages JPEG compression and decompression. 
+  - `network.py`: Implements UDP sending and receiving, including packet fragmentation and reassembly.
+  - `security.py`: Provides encryption and decryption functionalities using Fernet.
 
 ## Dependencies
 
 The project relies on the following Python libraries, managed via uv:
 
--   `opencv-python`
--   `numpy`
--   `cryptography`
+- `opencv-python`
+- `numpy`
+- `cryptography`
 
 ## Contributing
 
