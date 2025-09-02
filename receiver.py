@@ -17,13 +17,8 @@ def main():
     Main function to receive, decrypt, decompress, and display video frames.
     """
     parser = argparse.ArgumentParser(description="Secure Camera Stream Receiver")
+    parser.add_argument("host", type=str, default='0.0.0.0', help="The IP address to bind to (default: 0.0.0.0, listens on all interfaces).")
     parser.add_argument("port", type=int, help="The port number to listen on.")
-    parser.add_argument(
-        "--host",
-        type=str,
-        default="0.0.0.0",
-        help="The IP address to bind to (default: 0.0.0.0, listens on all interfaces)."
-    )
     parser.add_argument(
         "--key_path",
         type=str,
