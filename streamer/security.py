@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 from cryptography.fernet import Fernet, InvalidToken
 
 class Encryptor:
@@ -38,7 +39,7 @@ class Encryptor:
         """Encrypts data."""
         return self.fernet.encrypt(data)
 
-    def decrypt(self, token: bytes) -> bytes | None:
+    def decrypt(self, token: bytes) -> Optional[bytes]:
         """
         Decrypts a token.
         
@@ -63,4 +64,7 @@ def generate_key_and_save():
     logging.info(f"New encryption key generated and saved to '{key_path}'.")
     print(f"Key saved to {key_path}. Share this file securely with the receiver.")
 
+
+if __name__ == '__main__':
+    generate_key_and_save()
 
