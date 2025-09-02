@@ -1,5 +1,7 @@
 import cv2
-import logging
+import logging_mp as logging
+
+logger = logging.get_logger(__name__)
 
 class Camera:
     """
@@ -19,10 +21,10 @@ class Camera:
         self.cap = cv2.VideoCapture(self.camera_index)
         
         if not self.cap.isOpened():
-            logging.error(f"Could not open camera at index {self.camera_index}.")
+            logger.error(f"Could not open camera at index {self.camera_index}.")
             raise IOError(f"Camera at index {self.camera_index} is not available or is in use.")
             
-        logging.info(f"Camera {self.camera_index} opened successfully.")
+        logger.info(f"Camera {self.camera_index} opened successfully.")
 
     def capture_frame(self):
         """
@@ -33,7 +35,7 @@ class Camera:
         """
         ret, frame = self.cap.read()
         if not ret:
-            logging.warning("Failed to retrieve frame from camera.")
+            logger.warning("Failed to retrieve frame from camera.")
             return None
         return frame
 
@@ -43,6 +45,6 @@ class Camera:
         """
         if self.cap.isOpened():
             self.cap.release()
-            logging.info(f"Camera {self.camera_index} released.")
+            logger.info(f"Camera {self.camera_index} released.")
 
 

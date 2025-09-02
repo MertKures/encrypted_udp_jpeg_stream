@@ -1,5 +1,5 @@
 import argparse
-import logging
+import logging_mp as logging
 import cv2
 import time
 from streamer.network import UDPReceiver
@@ -7,10 +7,8 @@ from streamer.security import Encryptor
 from streamer.compression import Compressor
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basic_config(level=logging.INFO)
+logger = logging.get_logger(__name__)
 
 def main():
     """
@@ -29,13 +27,13 @@ def main():
 
     # --- Initialization ---
     try:
-        logging.info("Initializing receiver components...")
+        logger.info("Initializing receiver components...")
         receiver = UDPReceiver(host=args.host, port=args.port)
         encryptor = Encryptor.from_file(args.key_path)
         compressor = Compressor()
-        logging.info("Receiver initialized. Waiting for stream...")
+        logger.info("Receiver initialized. Waiting for stream...")
     except Exception as e:
-        logging.error(f"Failed to initialize components: {e}")
+        logger.error(f"Failed to initialize components: {e}")
         return
 
     # --- Main Receiving Loop ---
@@ -52,12 +50,12 @@ def main():
             # Calculate delay
             receive_time_ns = time.time_ns()
             delay_ms = (receive_time_ns - send_time_ns) / 1_000_000.0
-            logging.info(f"Packet Delay: {delay_ms:.2f} ms")
+            logger.info(f"Packet Delay: {delay_ms:.2f} ms")
 
             # 2. Decrypt
             compressed_frame = encryptor.decrypt(encrypted_packet)
             if compressed_frame is None:
-                logging.warning(f'The frame is probably corrupted.')
+                logger.warning(f'The frame is probably corrupted.')
                 # The packet was invalid/corrupted and has been dropped.
                 continue
 
@@ -70,7 +68,7 @@ def main():
             frame_count += 1
             if time.time() - start_time >= 1.0:
                 throughput = frame_count / (time.time() - start_time)
-                logging.info(f"Receiver Throughput: {throughput:.2f} frames/sec")
+                logger.info(f"Receiver Throughput: {throughput:.2f} frames/sec")
                 frame_count = 0
                 start_time = time.time()
 
@@ -79,15 +77,15 @@ def main():
                 break
 
     except KeyboardInterrupt:
-        logging.info("Receiver stopped by user.")
+        logger.info("Receiver stopped by user.")
     except Exception as e:
-        logging.error(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
     finally:
         # --- Cleanup ---
-        logging.info("Closing resources.")
+        logger.info("Closing resources.")
         receiver.close()
         cv2.destroyAllWindows()
-        logging.info("Receiver shut down.")
+        logger.info("Receiver shut down.")
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,8 @@
-import logging
+import logging_mp as logging
 from typing import Optional
 from cryptography.fernet import Fernet, InvalidToken
+
+logger = logging.get_logger(__name__)
 
 class Encryptor:
     """
@@ -31,8 +33,8 @@ class Encryptor:
                 key = key_file.read()
             return cls(key)
         except FileNotFoundError:
-            logging.error(f"Encryption key file not found at '{key_path}'.")
-            logging.error("Generate a key with: `generate-stream-key`")
+            logger.error(f"Encryption key file not found at '{key_path}'.")
+            logger.error("Generate a key with: `generate-stream-key`")
             raise
 
     def encrypt(self, data: bytes) -> bytes:
@@ -49,7 +51,7 @@ class Encryptor:
         try:
             return self.fernet.decrypt(token)
         except InvalidToken:
-            logging.warning("Received a corrupted or invalid data packet. Dropping it.")
+            logger.warning("Received a corrupted or invalid data packet. Dropping it.")
             return None
 
 def generate_key_and_save():
@@ -61,7 +63,7 @@ def generate_key_and_save():
     key_path = "secret.key"
     with open(key_path, "wb") as key_file:
         key_file.write(key)
-    logging.info(f"New encryption key generated and saved to '{key_path}'.")
+    logger.info(f"New encryption key generated and saved to '{key_path}'.")
     print(f"Key saved to {key_path}. Share this file securely with the receiver.")
 
 

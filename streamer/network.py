@@ -1,7 +1,9 @@
 import socket
-import logging
+import logging_mp as logging
 from typing import Tuple
 import time
+
+logger = logging.get_logger(__name__)
 
 MAX_UDP_PAYLOAD_SIZE = 1472  # Maximum UDP payload size (1500 bytes MTU - 20 bytes IP header - 8 bytes UDP header)
 
@@ -36,7 +38,7 @@ class UDPSender:
                 self.sock.sendto(packet, self.server_address)
                 sequence_num += 1
             except socket.error as e:
-                logging.error(f"Socket error while sending data: {e}")
+                logger.error(f"Socket error while sending data: {e}")
                 break # Stop sending further packets if an error occurs
 
     def close(self):
@@ -50,7 +52,7 @@ class UDPReceiver:
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.host, self.port))
-        logging.info(f"UDP Receiver listening on {self.host}:{self.port}")
+        logger.info(f"UDP Receiver listening on {self.host}:{self.port}")
         self.incomplete_frames = {}
         self.last_received_time_ns = None
         self.inter_arrival_times = []
@@ -71,7 +73,7 @@ class UDPReceiver:
             data, _ = self.sock.recvfrom(buffer_size)
             return data
         except socket.error as e:
-            logging.error(f"Socket error while receiving data: {e}")
+            logger.error(f"Socket error while receiving data: {e}")
             return b''
 
     def receive_frame(self, buffer_size: int = 65535) -> Tuple[bytes, int]:
@@ -88,7 +90,7 @@ class UDPReceiver:
                 header_end_idx = packet_data.find(b':', third_colon_idx + 1)
 
                 if header_end_idx == -1:
-                    logging.warning("Malformed packet header received, skipping.")
+                    logger.warning("Malformed packet header received, skipping.")
                     continue
                 
                 header_parts = packet_data[:header_end_idx].decode('utf-8').split(':')
@@ -108,7 +110,7 @@ class UDPReceiver:
                         avg_inter_arrival_time = (sum(self.inter_arrival_times) / len(self.inter_arrival_times)) / 1e6
                         # Jitter can be calculated as the mean deviation of inter-arrival times
                         jitter = (sum(abs(t - avg_inter_arrival_time) for t in self.inter_arrival_times) / len(self.inter_arrival_times)) / 1e6
-                        logging.info(f"Jitter (ms): {jitter:.2f}, Avg Inter-arrival Time (ms): {avg_inter_arrival_time:.2f}")
+                        logger.info(f"Jitter (ms): {jitter:.2f}, Avg Inter-arrival Time (ms): {avg_inter_arrival_time:.2f}")
                         self.inter_arrival_times = [] # Reset for next interval
                 self.last_received_time_ns = current_receive_time_ns
 
@@ -127,9 +129,9 @@ class UDPReceiver:
                     return full_frame_data, frame_info["send_time_ns"]
 
             except (ValueError, IndexError) as e:
-                logging.error(f"Error parsing packet: {e}")
+                logger.error(f"Error parsing packet: {e}")
             except Exception as e:
-                logging.error(f"Unexpected error in receive_frame: {e}")
+                logger.error(f"Unexpected error in receive_frame: {e}")
 
     def close(self):
         """Closes the socket."""

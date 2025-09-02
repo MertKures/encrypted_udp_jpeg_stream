@@ -7,5 +7,6 @@ requires-python = ">=3.8"
 dependencies = [
     "opencv-python",
     "cryptography",
-    "numpy"
+    "numpy",
+    "logging-mp>=0.1.6",
 ]

@@ -1,16 +1,14 @@
 import argparse
 import time
-import logging
+import logging_mp as logging
 from streamer.camera import Camera
 from streamer.compression import Compressor
 from streamer.network import UDPSender
 from streamer.security import Encryptor
 
 # Configure logging for better diagnostics
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basic_config(level=logging.INFO)
+logger = logging.get_logger(__name__)
 
 def main():
     """
@@ -43,14 +41,14 @@ def main():
 
     # --- Initialization of Modules ---
     try:
-        logging.info("Initializing components...")
+        logger.info("Initializing components...")
         camera = Camera(camera_index=args.camera_index)
         compressor = Compressor(quality=args.quality)
         encryptor = Encryptor.from_file(args.key_path)
         sender = UDPSender(host=args.host, port=args.port)
-        logging.info(f"Components initialized. Streaming to {args.host}:{args.port}")
+        logger.info(f"Components initialized. Streaming to {args.host}:{args.port}")
     except Exception as e:
-        logging.error(f"Failed to initialize components: {e}")
+        logger.error(f"Failed to initialize components: {e}")
         return
 
     # --- Main Streaming Loop ---
@@ -63,7 +61,7 @@ def main():
             frame = camera.capture_frame()
 
             if frame is None:
-                logging.warning("Failed to capture frame, skipping.")
+                logger.warning("Failed to capture frame, skipping.")
                 time.sleep(0.1) # Wait a bit before retrying
                 continue
 
@@ -79,20 +77,20 @@ def main():
             frame_count += 1
             if time.time() - start_time >= 1.0:
                 throughput = frame_count / (time.time() - start_time)
-                logging.info(f"Throughput: {throughput:.2f} frames/sec")
+                logger.info(f"Throughput: {throughput:.2f} frames/sec")
                 frame_count = 0
                 start_time = time.time()
 
     except KeyboardInterrupt:
-        logging.info("Streaming stopped by user.")
+        logger.info("Streaming stopped by user.")
     except Exception as e:
-        logging.error(f"An unexpected error occurred during streaming: {e}")
+        logger.error(f"An unexpected error occurred during streaming: {e}")
     finally:
         # --- Cleanup ---
-        logging.info("Closing resources.")
+        logger.info("Closing resources.")
         camera.release()
         sender.close()
-        logging.info("Streamer shut down.")
+        logger.info("Streamer shut down.")
 
 if __name__ == "__main__":
     main()
