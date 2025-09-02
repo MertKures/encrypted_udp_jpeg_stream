@@ -1,7 +1,11 @@
 [project]
 name = "encrypted-udp-jpeg-stream"
 version = "0.1.0"
-description = "Add your description here"
+description = "A simple project for transmitting encrypted images over UDP using symmetric key."
 readme = "README.md"
-requires-python = ">=3.10"
-dependencies = []
+requires-python = ">=3.8"
+dependencies = [
+    "opencv-python",
+    "cryptography",
+    "numpy"
+]
