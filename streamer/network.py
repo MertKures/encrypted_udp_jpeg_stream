@@ -59,7 +59,7 @@ class UDPReceiver:
         self.inter_arrival_times = []
         self.jitter_log_interval = 100 # Log jitter every 100 packets
 
-    def receive(self, buffer_size: int = 65535) -> bytes:
+    def receive(self, buffer_size: int = 4096) -> bytes:
         """
         Receives a single UDP packet.
         
@@ -77,7 +77,7 @@ class UDPReceiver:
             logger.error(f"Socket error while receiving data: {e}")
             return b''
 
-    def receive_frame(self, buffer_size: int = 65535) -> Tuple[bytes, int]:
+    def receive_frame(self, buffer_size: int = 4096) -> Tuple[bytes, int]:
         while True:
             packet_data = self.receive(buffer_size)
             if not packet_data:
@@ -200,7 +200,7 @@ class MulticastReceiver:
         self.inter_arrival_times = []
         self.jitter_log_interval = 100
 
-    def receive(self, buffer_size: int = 65535) -> bytes:
+    def receive(self, buffer_size: int = 4096) -> bytes:
         try:
             data, _ = self.sock.recvfrom(buffer_size)
             return data
@@ -208,7 +208,7 @@ class MulticastReceiver:
             logger.error(f"Socket error while receiving multicast data: {e}")
             return b''
 
-    def receive_frame(self, buffer_size: int = 65535) -> Tuple[bytes, int]:
+    def receive_frame(self, buffer_size: int = 4096) -> Tuple[bytes, int]:
         while True:
             packet_data = self.receive(buffer_size)
             if not packet_data:
