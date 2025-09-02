@@ -6,7 +6,7 @@ import struct
 
 logger = logging.get_logger(__name__)
 
-MAX_UDP_PAYLOAD_SIZE = 1472  # Maximum UDP payload size (1500 bytes MTU - 20 bytes IP header - 8 bytes UDP header)
+MAX_UDP_PAYLOAD_SIZE = 32  # Maximum UDP payload size is 1472 (1500 bytes MTU - 20 bytes IP header - 8 bytes UDP header).
 
 class UDPSender:
     """
