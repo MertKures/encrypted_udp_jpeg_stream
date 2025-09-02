@@ -15,7 +15,7 @@ A modular Python package designed for securely streaming compressed camera foota
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/encrypted_udp_jpeg_stream.git
+    git clone https://github.com/MertKures/encrypted_udp_jpeg_stream.git
     cd encrypted_udp_jpeg_stream
     ```
 
